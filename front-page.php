@@ -1,81 +1,137 @@
 <?php
-/**
- *	The template for displaying the front page.
- *
- *	@package WordPress
- *	@subpackage illdy
- */
-
 
 get_header();
 
+?>
 
-if( get_option( 'show_on_front' ) == 'posts' ): ?>
-	
+<?php
+
+if ( 'posts' == get_option( 'show_on_front' ) ) {
+?>
+
 	<div class="container">
 		<div class="row">
-			<div class="col-sm-7">
-				<section id="blog">
-					<?php do_action( 'illdy_above_content_after_header' ); ?>
+			<section class="has-padding">
+				<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
 					<?php
-					if( have_posts() ):
-						while( have_posts() ):
+					if ( have_posts() ) {
+
+						while ( have_posts() ) {
 							the_post();
-							get_template_part( 'template-parts/content', get_post_format() );
-						endwhile;
-					else:
-						get_template_part( 'template-parts/content', 'none' );
-					endif;
+							?>
+
+							<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+								<div class="pixova-date"></div><!--/.pixova-date-->
+								<header class="entry-header">
+									<?php the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+								</header><!-- .entry-header -->
+
+								<?php if ( has_post_thumbnail() ) { ?>
+									<aside class="entry-featured-image">
+										<?php echo get_the_post_thumbnail( $post->ID, 'pixova-lite-featured-blog-image' ); ?>
+									</aside><!--/.entry-featured-image-->
+								<?php } ?>
+								<div class="entry-meta">
+									<?php
+									printf(
+										// Translators: 1 is the post author, 2 is the category list.
+										__( '<span class="post-meta-separator"><i class="fa fa-user"></i>%1$s</span><span class="post-meta-separator"><i class="fa fa-calendar"></i>%2$s</span><span class="post-meta-separator"><i class="fa fa-comment"></i>%3$s</span><span class="post-meta-separator"><i class="fa fa-folder"></i>%4$s</span>', 'pixova-lite' ),
+										get_the_author_link(),
+										// Translators: Post time
+										get_the_date( get_option( 'date_format' ), $post->ID ),
+										// Translators: Number of com,ments
+										pixova_lite_get_number_of_comments( $post->ID ),
+										// Translators: tag list
+										get_the_tag_list( 'Tags: ',', ','' )
+									);
+									?>
+								</div><!--/.entry-meta-->
+								<div class="entry-content">
+									<?php
+										echo apply_filters( 'the_content', substr( get_the_content(), 0, 200 ) );
+
+										wp_link_pages(
+											array(
+												'before' => '<div class="page-links">' . __( 'Pages:', 'pixova-lite' ),
+												'after'  => '</div>',
+											)
+										);
+									?>
+								</div><!-- .entry-content -->
+								<div class="clearfix"></div><!--/.clearfix-->
+							</article><!-- #post-## -->
+						<?php
+						}// End while().
+						?>
+					<?php
+					}// End if().
 					?>
-					<?php do_action( 'illdy_after_content_above_footer' ); ?>
-				</section><!--/#blog-->
-			</div><!--/.col-sm-7-->
-			<?php get_sidebar(); ?>
+				</div><!--/.col-lg-8-->
+
+				<div class="col-lg-3 col-md-3 col-sm-3 hidden-xs pull-right">
+					<aside class="pixova-blog-sidebar">
+						<?php
+						if ( is_active_sidebar( 'blog-sidebar' ) ) {
+							dynamic_sidebar( 'blog-sidebar' );
+						} else {
+							the_widget( 'WP_Widget_Search', sprintf( 'title=%s', __( 'Search', 'pixova-lite' ) ) );
+							the_widget( 'WP_Widget_Calendar', sprintf( 'title=%s', __( 'Calendar', 'pixova-lite' ) ) );
+						}
+						?>
+					</aside> <!--/.pixova-blog-sidebar-->
+				</div><!--/.col-lg-3-->
+
+				<div class="pixova-custom-pagination col-lg-12">
+					<?php the_posts_pagination(); ?>
+				</div><!--/.pixova-custom-pagination-->
+			</section><!--/section-->
 		</div><!--/.row-->
 	</div><!--/.container-->
 
 <?php
-else:
+} // End if().
+else {
 
-	$sections_order_first_section = get_theme_mod( 'illdy_general_sections_order_first_section', 1 );
-	$sections_order_second_section = get_theme_mod( 'illdy_general_sections_order_second_section', 2 );
-	$sections_order_third_section = get_theme_mod( 'illdy_general_sections_order_third_section', 3 );
-	$sections_order_fourth_section = get_theme_mod( 'illdy_general_sections_order_fourth_section', 4 );
-	$sections_order_fifth_section = get_theme_mod( 'illdy_general_sections_order_fifth_section', 5 );
-	$sections_order_sixth_section = get_theme_mod( 'illdy_general_sections_order_sixth_section', 6 );
-	$sections_order_seventh_section = get_theme_mod( 'illdy_general_sections_order_seventh_section', 7 );
-	$sections_order_eighth_section = get_theme_mod( 'illdy_general_sections_order_eighth_section', 8 );
-	
-	if( have_posts() ):
-		while( have_posts() ): the_post();
-			$static_page_content = get_the_content();
-			if ( $static_page_content != '' ) : ?>
-				<section class="front-page-section" id="static-page-content">
-					<div class="section-header">
-						<div class="container">
-							<div class="row">
-								<div class="col-sm-12">
-									<h3><?php the_title(); ?></h3>
-								</div><!--/.col-sm-12-->
-							</div><!--/.row-->
-						</div><!--/.container-->
-					</div><!--/.section-header-->
-					<div class="section-content">
-						<div class="container-fluid">
-							<div class="row">
-								<div class="col-sm-10 col-sm-offset-1">
-									<?php echo $static_page_content; ?>
-								</div>
-							</div>
-						</div>
-					</div>
-				</section>
-			<?php endif;
-		endwhile;
-	endif;
 
-	illdy_sections();
+	$sections      = pixova_get_sections_position();
+	$sections_args = array(
+		'pixova_lite_panel_intro'        => array(
+			'check'    => 'pixova_lite_intro_visibility',
+			'template' => 'intro',
+		),
+		'pixova_lite_panel_about'        => array(
+			'check'    => 'pixova_lite_about_visibility',
+			'template' => 'about',
+		),
+		'pixova_lite_panel_works'        => array(
+			'check'    => 'pixova_lite_works_visibility',
+			'template' => 'works',
+		),
+		'pixova_lite_panel_testimonials' => array(
+			'check'    => 'pixova_lite_testimonials_visibility',
+			'template' => 'testimonials',
+		),
+		'pixova_lite_panel_news'         => array(
+			'check'    => 'pixova_lite_news_visibility',
+			'template' => 'news',
+		),
+		'pixova_lite_panel_team'         => array(
+			'check'    => 'pixova_lite_team_visibility',
+			'template' => 'team',
+		),
+		'pixova_lite_panel_contact'      => array(
+			'check'    => 'pixova_lite_contact_visibility',
+			'template' => 'contact',
+		),
+	);
 
-endif;
+	foreach ( $sections as $section ) {
 
-get_footer(); ?>
+		if ( get_theme_mod( $sections_args[ $section ]['check'], 1 ) ) {
+			get_template_part( 'sections/section', $sections_args[ $section ]['template'] );
+		}
+	}
+} // else
+?>
+
+<?php get_footer(); ?>

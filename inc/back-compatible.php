@@ -1,176 +1,122 @@
 <?php
+/**
+ *  Back compatible functionality: less as 4.1-alpha
+ */
+if ( version_compare( $GLOBALS['wp_version'], '4.1-alpha', '<' ) ) {
+	if ( ! function_exists( 'pixova_lite_switch_theme' ) ) {
+		/**
+		 * Prevent switching to Pixova Lite on old versions of WordPress.
+		 *
+		 * Switches to the default theme.
+		 *
+		 * @since Pixova Lite 1.16
+		 */
+		function pixova_lite_switch_theme() {
+			switch_theme( WP_DEFAULT_THEME, WP_DEFAULT_THEME );
+			unset( $_GET['activated'] );
+			add_action( 'admin_notices', 'pixova_lite_upgrade_notice' );
+		}
 
-$theme = wp_get_theme();
-if( version_compare( $theme->version, '1.0.17', '>' ) ) {
+		add_action( 'after_switch_theme', 'pixova_lite_switch_theme' );
+	}
 
-	$current_logo = get_theme_mod( 'illdy_img_logo', '' );
-	$logo = get_custom_logo();
-	if ( $current_logo != '' && !$logo ) {
-		$logoID = attachment_url_to_postid($current_logo);
-		if ( $logoID ) {
-			set_theme_mod( 'custom_logo', $logoID );
-			remove_theme_mod( 'illdy_img_logo' );
+	if ( ! function_exists( 'pixova_lite_upgrade_notice' ) ) {
+		/**
+		 * Add message for unsuccessful theme switch.
+		 *
+		 * Prints an update nag after an unsuccessful attempt to switch to
+		 * Pixova Lite on WordPress versions prior to 4.1.
+		 *
+		 * @since Pixova Lite 1.16
+		 */
+		function pixova_lite_upgrade_notice() {
+			$message = sprintf( __( 'Pixova Lite requires at least WordPress version 4.1. You are running version %s. Please upgrade and try again.', 'pixova-lite' ), $GLOBALS['wp_version'] );
+			printf( '<div class="error"><p>%s</p></div>', $message );
 		}
 	}
 
+	if ( ! function_exists( 'pixova_lite_customize' ) ) {
+		/**
+		 * Prevent the Customizer from being loaded on WordPress versions prior to 4.1.
+		 *
+		 * @since Pixova Lite 1.16
+		 */
+		function pixova_lite_customize() {
+			wp_die( sprintf( __( 'Pixova Lite requires at least WordPress version 4.1. You are running version %s. Please upgrade and try again.', 'pixova-lite' ), $GLOBALS['wp_version'] ), '', array(
+				'back_link' => true,
+			) );
+		}
+
+		add_action( 'load-customize.php', 'pixova_lite_customize' );
+	}
+
+	if ( ! function_exists( 'pixova_lite_preview' ) ) {
+		/**
+		 * Prevent the Theme Preview from being loaded on WordPress versions prior to 4.1.
+		 *
+		 * @since Pixova Lite 1.16
+		 */
+		function pixova_lite_preview() {
+			if ( isset( $_GET['preview'] ) ) {
+				wp_die( sprintf( __( 'Pixova Lite requires at least WordPress version 4.1. You are running version %s. Please upgrade and try again.', 'pixova-lite' ), $GLOBALS['wp_version'] ) );
+			}
+		}
+
+		add_action( 'template_redirect', 'pixova_lite_preview' );
+	}
+}// End if().
+
+/**
+ *  Back compatible functionality: less or equal as 4.4.2
+ */
+if ( version_compare( $GLOBALS['wp_version'], '4.4.2', '<=' ) ) {
+	// Logo
+	add_action( 'pixova_lite_logo', 'pixova_lite_logo_less_45', 1 );
+	function pixova_lite_logo_less_45() {
+		$text_logo  = esc_html( get_option( 'blogname' ) );
+		$image_logo = get_theme_mod( 'pixova_lite_image_logo' );
+
+		$output = '';
+
+		if ( $image_logo ) {
+			$output .= '<a class="logo" href="' . esc_url( get_site_url() ) . '"><img src="' . esc_url( $image_logo ) . '" alt="' . esc_attr( get_bloginfo( 'title' ) ) . '" title="' . esc_attr( get_bloginfo( 'title' ) ) . '" /></a>';
+		} else {
+			$output .= '<a class="logo" href="' . esc_url( get_site_url() ) . '">' . esc_html( $text_logo ) . '</a>';
+		}
+
+		echo $output;
+	}
 }
 
-// Backward compatibility for sections ordering
-if( version_compare( $theme->version, '1.0.36', '>=' ) ) {
+// Back compatible functionality for new customizer
+$check_for_compatibility = get_option( 'pixova-customizer-v2' );
 
-	$defaults = array(
-				'illdy_panel_about',
-				'illdy_panel_projects',
-				'illdy_testimonials_general',
-				'illdy_panel_services',
-				'illdy_latest_news_general',
-				'illdy_counter_general',
-				'illdy_panel_team',
-				'illdy_contact_us',
-				'illdy_full_width'
-			);
+if ( ! $check_for_compatibility ) {
 
-	$old_order = array();
-	$new_order = array();
+	$pixova_settings = get_theme_mods();
+	if ( $pixova_settings ) {
 
-	$old_order[] = get_theme_mod( 'illdy_general_sections_order_first_section');
-	$old_order[] = get_theme_mod( 'illdy_general_sections_order_second_section');
-	$old_order[] = get_theme_mod( 'illdy_general_sections_order_third_section');
-	$old_order[] = get_theme_mod( 'illdy_general_sections_order_fourth_section');
-	$old_order[] = get_theme_mod( 'illdy_general_sections_order_fifth_section');
-	$old_order[] = get_theme_mod( 'illdy_general_sections_order_sixth_section');
-	$old_order[] = get_theme_mod( 'illdy_general_sections_order_seventh_section');
-	$old_order[] = get_theme_mod( 'illdy_general_sections_order_eighth_section');
-
-	foreach ($old_order as $key) {
-		if ( $key ) {
-			$index = $key-1;
-			$new_order[$index] = $defaults[$index];
-			unset($defaults[$index]);
-		}
-	}
-
-	if ( !empty($new_order) ) {
-		$new_order = array_merge( $new_order, $defaults );
-		set_theme_mod( 'illdy_frontpage_sections', $new_order );
-
-		remove_theme_mod( 'illdy_general_sections_order_first_section');
-		remove_theme_mod( 'illdy_general_sections_order_second_section');
-		remove_theme_mod( 'illdy_general_sections_order_third_section');
-		remove_theme_mod( 'illdy_general_sections_order_fourth_section');
-		remove_theme_mod( 'illdy_general_sections_order_fifth_section');
-		remove_theme_mod( 'illdy_general_sections_order_sixth_section');
-		remove_theme_mod( 'illdy_general_sections_order_seventh_section');
-		remove_theme_mod( 'illdy_general_sections_order_eighth_section');
-
-	}
-
-	// Backward compatibility for testimonials section
-	$illdy_testimonials_update = get_theme_mod( 'illdy_testimonials_update');
-	if ( class_exists('Illdy_Widget_Testimonial') && ! $illdy_testimonials_update ) {
-
-		$jetpack_testimonial_query_args = array (
-			'post_type'			=> array( 'jetpack-testimonial' ),
-			'post_status'		=> 'publish',
-			'posts_per_page'	=> -1,
-		);
-
-		$jetpack_testimonial_query = new WP_Query( $jetpack_testimonial_query_args );
-
-		if ( $jetpack_testimonial_query->have_posts() ) {
-			$sidebars_widgets = get_option( 'sidebars_widgets' );
-			$widgets = get_option( 'widget_illdy_testimonial' );
-
-			if ( !empty($widgets) ) {
-				$aux_widgets = $widgets;
-				if ( isset($aux_widgets['_multiwidget']) ) {
-					unset($aux_widgets['_multiwidget']);
+		$existing_settings = Pixova_Lite_Helper::parse_pixova_settings();
+		$new_fields        = false;
+		foreach ( $pixova_settings as $key => $value ) {
+			if ( in_array( $key, Pixova_Lite_Helper::$pixova_fields, true ) ) {
+				if ( isset( $existing_settings[ $key ] ) && $existing_settings[ $key ] !== $value ) {
+					$new_fields                = true;
+					$existing_settings[ $key ] = $value;
+				} elseif ( ! isset( $existing_settings[ $key ] ) ) {
+					$new_fields                = true;
+					$existing_settings[ $key ] = $value;
 				}
-				$last_key = key( array_slice( $aux_widgets, -1, 1, TRUE ) );
-			}else{
-				$last_key = 1;
+				remove_theme_mod( $key );
 			}
-			$key = intval($last_key) + 1;
-
-			if ( !isset($sidebars_widgets['front-page-testimonials-sidebar']) ) {
-				$sidebars_widgets['front-page-testimonials-sidebar'] = array();
-			}
-
-			foreach ($jetpack_testimonial_query->posts as $index => $post) {
-				
-				$url = get_the_post_thumbnail_url( $post->ID, 'illdy-front-page-testimonials' );
-				$name = $post->post_title;
-				$testimonial = $post->post_content;
-				$widgets[$key] = array(
-						'name' => $name,
-						'image'  => $url,
-						'testimonial' => $testimonial
-					);
-				array_push( $sidebars_widgets['front-page-testimonials-sidebar'], 'illdy_testimonial-'.$key );
-
-				$key = $key+1;
-			}
-
-			update_option( 'widget_illdy_testimonial', $widgets );
-			update_option( 'sidebars_widgets', $sidebars_widgets );
-			set_theme_mod( 'illdy_testimonials_update', true );
-			
 		}
 
-	}
-
-
-	// Jumbotron Title
-	$first_word = get_theme_mod( 'illdy_jumbotron_general_first_row_from_title' );
-	$second_word = get_theme_mod( 'illdy_jumbotron_general_second_row_from_title' );
-	$third_word = get_theme_mod( 'illdy_jumbotron_general_third_row_from_title' );
-
-	if ( $first_word || $second_word || $third_word ) {
-		
-		$title = '';
-		if ( $first_word ) {
-			$title = $first_word;
+		if ( $new_fields ) {
+			update_post_meta( Pixova_Lite_Helper::get_setting_page_id(), 'pixova-settings', $existing_settings );
+			Pixova_Lite_Helper::create_content_from_options( $existing_settings );
 		}
-		if ( $second_word ) {
-			if ( $title != '' ) {
-				$title .= '<span class="span-dot">.</span>';
-			}
-			$title .= $second_word;
-		}
-		if ( $third_word ) {
-			if ( $title != '' ) {
-				$title .= '<span class="span-dot">.</span>';
-			}
-			$title .= $third_word;
-		}
-
-
-		set_theme_mod( 'illdy_jumbotron_title', $title );
-		remove_theme_mod( 'illdy_jumbotron_general_first_row_from_title');
-		remove_theme_mod( 'illdy_jumbotron_general_second_row_from_title');
-		remove_theme_mod( 'illdy_jumbotron_general_third_row_from_title');
-
 	}
 
-	// Contact US Title
-	$contacus_title = get_theme_mod( 'illdy_contact_us_title' );
-	if ( $contacus_title ) {
-		set_theme_mod( 'illdy_contact_us_general_title', $contacus_title );
-		remove_theme_mod( 'illdy_contact_us_title');
-	}
-
-	//Adress Title
-	$address_title = get_theme_mod( 'illdy_contact_us_address_title' );
-	if ( $address_title ) {
-		set_theme_mod( 'illdy_contact_us_general_address_title', $address_title );
-		remove_theme_mod( 'illdy_contact_us_address_title');
-	}
-
-	//Support Title
-	$support_title = get_theme_mod( 'illdy_contact_us_customer_support_title' );
-	if ( $support_title ) {
-		set_theme_mod( 'illdy_contact_us_general_customer_support_title', $support_title );
-		remove_theme_mod( 'illdy_contact_us_customer_support_title');
-	}
+	update_option( 'pixova-customizer-v2', true );
 
 }

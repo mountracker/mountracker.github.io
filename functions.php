@@ -1,450 +1,704 @@
 <?php
-/**
- *    Sets up theme defaults and registers support for various WordPress features.
- *
- *    Note that this function is hooked into the after_setup_theme hook, which
- *    runs before the init hook. The init hook is too late for some features, such
- *    as indicating support for post thumbnails.
- */
-if ( ! function_exists( 'illdy_setup' ) ) {
-	add_action( 'after_setup_theme', 'illdy_setup' );
-	function illdy_setup() {
 
-		// Extras
-		require_once trailingslashit( get_template_directory() ) . 'inc/extras.php';
+if ( ! function_exists( 'pixova_lite_theme_setup' ) ) {
+	/**
+	 * Sets up theme defaults and registers support for various WordPress features.
+	 *
+	 * Note that this function is hooked into the after_setup_theme hook, which
+	 * runs before the init hook. The init hook is too late for some features, such
+	 * as indicating support for post thumbnails.
+	 *
+	 * @since Pixova Lite 1.0.0
+	 */
+	function pixova_lite_theme_setup() {
 
-		// Customizer
-		require_once trailingslashit( get_template_directory() ) . 'inc/customizer/customizer.php';
+		/*
+        * Using this feature you can set the maximum allowed width for any content in the theme, like oEmbeds and images added to posts.
+        * @see http://codex.wordpress.org/Content_Width
+        */
+		if ( ! isset( $content_width ) ) {
+			$content_width = 1140;
+		}
 
-		// JetPack
-		require_once trailingslashit( get_template_directory() ) . 'inc/jetpack.php';
+		/**
+		 * Custom Header Support
+		 */
 
-		// Components
-		require_once trailingslashit( get_template_directory() ) . 'inc/components/entry-meta/class.mt-entry-meta.php';
-		require_once trailingslashit( get_template_directory() ) . 'inc/components/author-box/class.mt-author-box.php';
-		require_once trailingslashit( get_template_directory() ) . 'inc/components/related-posts/class.mt-related-posts.php';
+		$args = array(
+			'default-image'      => get_template_directory_uri() . '/layout/images/header-bg.jpg',
+			'default-text-color' => '#000',
+			'width'              => 1920,
+			'height'             => 1080,
+			'flex-height'        => true,
+			'video'              => true,
+		);
 
+		add_theme_support( 'custom-header', $args );
 
-		// Load Theme Textdomain
-		load_theme_textdomain( 'illdy', get_template_directory() . '/languages' );
+		/**
+		 * Jetpack support
+		 */
+		require get_template_directory() . '/inc/jetpack.php';
 
-		// Add Theme Support
-		add_theme_support( 'woocommerce' );
-		add_theme_support( 'automatic-feed-links' );
-		add_theme_support( 'title-tag' );
-		add_theme_support( 'post-thumbnails' );
-		add_theme_support( 'custom-logo', array(
-			'height'      => 75,
-   			'flex-height' => false,
-			'flex-width'  => true,
-		) );
-		add_theme_support( 'html5', array( 'search-form', 'comment-form', 'comment-list', 'gallery', 'caption' ) );
-		add_theme_support( 'custom-header', array(
-			'default-image'  => esc_url( get_template_directory_uri() . '/layout/images/blog/blog-header.png' ),
-			'width'          => 1920,
-			'height'         => 532,
-			'flex-height'    => true,
-			'flex-width'    => true,
-			'random-default' => true,
-			'header-text'    => false,
-		) );
-		add_theme_support( 'customize-selective-refresh-widgets' );
-		register_default_headers( array(
-			'default' => array(
-				'url'           => '%s/layout/images/blog/blog-header.png',
-				'thumbnail_url' => '%s/layout/images/blog/blog-header.png',
-				'description'   => __( 'Coffe', 'illdy' )
-			),
-		) );
+		/**
+		 * Custom functions that act independently of the theme templates.
+		 */
+		require get_template_directory() . '/inc/extras.php';
+		require get_template_directory() . '/inc/components/breadcrumbs/class-pixova-lite-breadcrumbs.php';
+		require get_template_directory() . '/inc/components/related-posts/class-pixova-lite-related-posts.php';
 
+		/**
+		 * Customizer additions.
+		 */
+		require get_template_directory() . '/inc/class-pixova-lite-helper.php';
+		require get_template_directory() . '/inc/customizer/class-pixova-custom-panel.php';
+		require get_template_directory() . '/inc/customizer/class-pixova-custom-control.php';
+		require get_template_directory() . '/inc/customizer/class-pixova-custom-setting.php';
+		require get_template_directory() . '/inc/customizer/class-pixova-custom-upload.php';
+		require get_template_directory() . '/inc/customizer.php';
+		require get_template_directory() . '/inc/customizer/class-pixova-lite-cf7-custom-control.php';
+		require get_template_directory() . '/inc/customizer/class-pixova-lite-number-custom-control.php';
 
-		// Add Image Size
-		add_image_size( 'illdy-blog-list', 750, 500, true );
-		add_image_size( 'illdy-widget-recent-posts', 70, 70, true );
-		add_image_size( 'illdy-blog-post-related-articles', 240, 206, true );
-		add_image_size( 'illdy-front-page-latest-news', 250, 213, true );
-		add_image_size( 'illdy-front-page-testimonials', 127, 127, true );
-		add_image_size( 'illdy-front-page-projects', 476, 476, true );
-		add_image_size( 'illdy-front-page-person', 125, 125, true );
+		/**
+		 * Sidebars
+		 */
+		require get_template_directory() . '/sidebars/sidebars.php';
 
-		// Register Nav Menus
-		register_nav_menus( array(
-			'primary-menu' => __( 'Primary Menu', 'illdy' ),
-		) );
+		/**
+		 * Widgets
+		 */
+		require get_template_directory() . '/widgets/class-pixova-lite-widget-about.php';
+		require get_template_directory() . '/widgets/class-pixova-lite-widget-latest-posts.php';
+		require get_template_directory() . '/widgets/class-pixova-lite-widget-social-media.php';
+
+		/**
+		 *  Next compatible
+		 */
+		require get_template_directory() . '/inc/next-compatible.php';
 
 		/**
 		 *  Back compatible
 		 */
 		require get_template_directory() . '/inc/back-compatible.php';
 
+		/*
+         * Make theme available for translation.
+         * Translations can be filed in the /languages/ directory.
+         */
+		load_theme_textdomain( 'pixova-lite', get_template_directory() . '/languages/' );
+
+		// Add default posts and comments RSS feed links to head.
+		add_theme_support( 'automatic-feed-links' );
+
+		/*
+         * This theme styles the visual editor to resemble the theme style,
+         * specifically font, colors, icons, and column width.
+         */
+		add_editor_style( array( 'layout/css/editor-style.min.css', 'layout/css/font-awesome.min.css', pixova_lite_fonts_url() ) );
+
+		/*
+         * Let WordPress manage the document title.
+         * By adding theme support, we declare that this theme does not use a
+         * hard-coded <title> tag in the document head, and expect WordPress to
+         * provide it for us.
+         */
+		add_theme_support( 'title-tag' );
+
+		/*
+         * Enable support for Post Thumbnails on posts and pages.
+         *
+         * @link http://codex.wordpress.org/Function_Reference/add_theme_support#Post_Thumbnails
+         */
+		add_theme_support( 'post-thumbnails' );
+
+		// This theme uses wp_nav_menu() in one location.
+		register_nav_menus(
+			array(
+				'primary'   => __( 'Header Menu', 'pixova-lite' ),
+				'secondary' => __( 'Footer Menu', 'pixova-lite' ),
+			)
+		);
+
+		// Setup the WordPress core custom background feature.
+		add_theme_support(
+			'custom-background', apply_filters(
+				'pixova_custom_background_args', array(
+					'default-color' => 'ffffff',
+					'default-image' => '',
+				)
+			)
+		);
+
+		/*
+         * Switch default core markup for search form, comment form, and comments
+         * to output valid HTML5.
+         */
+		add_theme_support(
+			'html5', array(
+				'search-form',
+				'comment-form',
+				'comment-list',
+				'gallery',
+				'caption',
+			)
+		);
+
+		/*
+         * Add WooCommerce theme support
+         */
+		add_theme_support( 'woocommerce' );
+		add_theme_support( 'wc-product-gallery-zoom' );
+		add_theme_support( 'wc-product-gallery-lightbox' );
+		add_theme_support( 'wc-product-gallery-slider' );
+
+		/*
+         * Add image sizes
+         * @link http://codex.wordpress.org/Function_Reference/add_image_size
+         */
+		add_image_size( 'pixova-lite-project-slider-logo-image', 187, 35, true );
+		add_image_size( 'pixova-lite-homepage-blog-posts', 250, 250, true );
+		add_image_size( 'pixova-lite-featured-blog-image', 750, 250, true );
+		add_image_size( 'pixova-lite-related-posts',  600, 450, true );
+		add_image_size( 'pixova-lite-recent-works-image', 285, 450, true );
+
+		/*
+         * Add selective refresh
+         */
+		add_theme_support( 'customize-selective-refresh-widgets' );
+
 		/*******************************************/
 		/*************  Welcome screen *************/
 		/*******************************************/
 
-		// Welcome screen
 		if ( is_admin() ) {
-			require get_template_directory() . '/inc/notify-system-checks.php';
-			global $illdy_required_actions, $illdy_recommended_plugins;
-			$illdy_recommended_plugins = array(
-				'kiwi-social-share'			=> array( 'recommended' => true ),
-				'contact-form-7'  			=> array( 'recommended' => false ),
-				'simple-custom-post-order' 	=> array( 'recommended' => false ),
-				'fancybox-for-wordpress' 	=> array( 'recommended' => false ),
-			);
-			/*
-			 * id - unique id; required
-			 * title
-			 * description
-			 * check - check for plugins (if installed)
-			 * plugin_slug - the plugin's slug (used for installing the plugin)
-			 *
-			 */
 
-			$illdy_required_actions = array(
+			global $pixova_required_actions, $pixova_recommended_plugins;
+			require get_template_directory() . '/inc/libraries/class-pixova-notify-system.php';
+			require get_template_directory() . '/inc/libraries/welcome-screen/class-epsilon-welcome-screen.php';
+
+			$pixova_recommended_plugins = array(
+				'kiwi-social-share'        => array(
+					'recommended' => false,
+				),
+				'modula-best-grid-gallery' => array(
+					'recommended' => true,
+				),
+				'fancybox-for-wordpress'   => array(
+					'recommended' => false,
+				),
+				'simple-custom-post-order' => array(
+					'recommended' => false,
+				),
+			);
+
+			/*
+             * id - unique id; required
+             * title
+             * description
+             * check - check for plugins (if installed)
+             * plugin_slug - the plugin's slug (used for installing the plugin)
+             *
+             */
+			$pixova_required_actions = array(
 				array(
-					"id"          => 'illdy-req-ac-install-illdy-companion',
-					"title"       => MT_Notify_System::create_plugin_title( __( 'Illdy Companion', 'illdy' ), 'illdy-companion' ),
-					"description" => __( 'It is highly recommended that you install the Illdy Companion.', 'illdy' ),
-					"check"       => MT_Notify_System::check_plugin_update( 'illdy-companion' ),
-					"type"		  => 'plugin',
-					"plugin_slug" => 'illdy-companion'
+					'id'          => 'pixova-lite-req-ac-install-contact-forms',
+					'title'       => esc_html__( 'Install Contact Form 7' ,'pixova-lite' ),
+					'description' => esc_html__( 'In the next updates, Pixova Lite\'s default contact form will be removed. Please make sure you install the Pirate Forms plugin to keep your site updated, and experience a smooth transition to the latest version.','pixova-lite' ),
+					'check'       => Pixova_Notify_System::has_plugin( 'contact-form-7' ),
+					'plugin_slug' => 'contact-form-7',
 				),
 				array(
-					"id"          => 'illdy-req-ac-install-contact-form-7',
-					"title"       => MT_Notify_System::create_plugin_requirement_title( __( 'Install: Contact Form 7', 'illdy' ), __( 'Activate: Contact Form 7', 'illdy' ), 'contact-form-7' ),
-					"description" => __( 'It is highly recommended that you install the Contact Form 7.', 'illdy' ),
-					"check"       => MT_Notify_System::has_import_plugin( 'contact-form-7' ),
-					"type"		  => 'plugin',
-					"plugin_slug" => 'contact-form-7'
+					'id'          => 'pixova-lite-import-demo-content',
+					'title'       => esc_html__( 'Add sample content', 'pixova-lite' ),
+					'description' => esc_html__( 'Clicking the button below will add content and set static front page to your WordPress installation. Click advanced to customize the import process.', 'pixova-lite' ),
+					'help'        => array( 'Epsilon_Welcome_Screen', 'demo_content_html' ),
+					'check'       => Pixova_Notify_System::check_for_content(),
+				),
+			);
+
+			if ( is_customize_preview() ) {
+				$url                                = 'themes.php?page=%1$s-welcome&tab=%2$s';
+				$pixova_required_actions[1]['help'] = '<a class="button button-primary" id="" href="' . esc_url( admin_url( sprintf( $url, 'pixova-lite', 'recommended-actions' ) ) ) . '">' . __( 'Import Demo Content', 'pixova-lite' ) . '</a>';
+			}
+
+			Epsilon_Welcome_Screen::get_instance(
+				$config = array(
+					'theme-name' => 'Pixova Lite',
+					'theme-slug' => 'pixova-lite',
+					'actions'    => $pixova_required_actions,
+					'plugins'    => $pixova_recommended_plugins,
+					'edd'        => false,
 				)
 			);
 
-			$illdy_required_actions = apply_filters( 'illdy_required_actions', $illdy_required_actions );
+		}// End if().
 
-			require get_template_directory() . '/inc/admin/welcome-screen/welcome-screen.php';
+	} // function pixova_lite_theme_setup
+	add_action( 'after_setup_theme', 'pixova_lite_theme_setup', 9 );
+} // End if().
+
+if ( ! function_exists( 'pixova_lite_enqueue_scripts' ) ) {
+	/**
+	 * Enqueue scripts and styles.
+	 *
+	 * @link http://codex.wordpress.org/Plugin_API/Action_Reference/wp_enqueue_scripts
+	 *
+	 * @since Pixova Lite 1.0.0
+	 */
+
+	function pixova_lite_enqueue_scripts() {
+
+		// Bootstrap JS (required for theme)
+		wp_register_script( 'bootstrap-min-js' , get_template_directory_uri() . '/layout/js/bootstrap/bootstrap.min.js', array( 'jquery' ), '3.3.4', true );
+
+		# Pace Loader
+		wp_register_script( 'pace-loader-min-js', get_template_directory_uri() . '/layout/js/pace/pace.min.js', array( 'jquery' ), '2.0', true );
+
+		# Sticky JS
+		wp_register_script( 'pixova-sticky-js', get_template_directory_uri() . '/layout/js/sticky/jquery.sticky.js', array( 'jquery' ), '2.0', true );
+
+		# Preloader JS
+		wp_register_script( 'pixova-lite-preloader', get_template_directory_uri() . '/layout/js/preloader.min.js', array( 'pace-loader-min-js' ), '1.0', true );
+
+		# ViewPort JS
+		wp_register_script( 'viewport-min-js', get_template_directory_uri() . '/layout/js/viewport/viewport.min.js', array( 'jquery' ), '1.0', true );
+
+		# Parallax JS
+		wp_register_script( 'parallax-min-js', get_template_directory_uri() . '/layout/js/parallax/parallax.min.js', array( 'jquery' ), '1.3.1', true );
+
+		# owlCarousel main JS
+		wp_register_script( 'owlCarousel-js', get_template_directory_uri() . '/layout/js/owl-carousel/owl-carousel.min.js', array( 'jquery' ), '1.3.3', true );
+
+		# Classie JS
+		wp_register_script( 'classie-js', get_template_directory_uri() . '/layout/js/classie/classie.js', array( 'jquery' ), '1.0.0', true );
+
+		# Smooth Scroll JS
+		wp_register_script( 'smooth-scroll-js', get_template_directory_uri() . '/layout/js/smoothscroll/smoothscroll.min.js', array( 'jquery' ), '0.9.9', true );
+
+		# WOW js
+		wp_register_script( 'wow-min-js', get_template_directory_uri() . '/layout/js/wow/wow.min.js', array( 'jquery' ), '1.0.3', true );
+
+		# Simple Placeholders JS
+		wp_register_script( 'simple-placeholder-js', get_template_directory_uri() . '/layout/js/simpleplaceholder/simplePlaceholder.min.js', array( 'jquery' ), '1.0.0', true );
+
+		# jQuery Easy Pie Charts
+		wp_register_script( 'pie-chart-js', get_template_directory_uri() . '/layout/js/easypiechart/easypiechart.min.js', array( 'jquery', 'viewport-min-js' ), '2.1.7', true );
+
+		# jQuery Easy Pie Charts
+		wp_register_script( 'pathloader-js', get_template_directory_uri() . '/layout/js/pathLoader.js', array(), '2.1.7', true );
+
+		# Scripts JS
+		wp_register_script( 'pixova-lite-scripts-js', get_template_directory_uri() . '/layout/js/scripts.min.js', array( 'jquery', 'classie-js' ), '1.41.1', true );
+
+		// Plugins JS
+		wp_register_script( 'pixova-lite-plugins-js', get_template_directory_uri() . '/layout/js/plugins.min.js', array( 'jquery', 'pie-chart-js', 'wow-min-js', 'pixova-lite-scripts-js', 'simple-placeholder-js' ), '1.41.1', true );
+
+		/* Enqueue scripts */
+		function pixova_lite_output_css_to_head() {
+
+			echo '<!-- Customizer CSS Fixes-->' . "\n";
+			echo '<style>';
+			echo '#page {padding-top: 0 !important; }' . "\n";
+			echo '</style>';
 		}
 
-	}
+		# Let's make sure we don't load our pre-loader script in the customizer
+		global $wp_customize;
 
-	// Add Editor Style
-	add_editor_style( 'illdy-google-fonts' );
+		# Preloader Enabled ?
+		$preloader_enabled = get_theme_mod( 'pixova_lite_preloader_enabled', 'preloader_enabled' );
 
-}
-
-if ( ! function_exists( 'illdy_is_not_latest_posts' ) ) {
-	function illdy_is_not_latest_posts() {
-		return ( 'page' == get_option( 'show_on_front' ) ? true : false );
-	}
-}
-
-if ( ! function_exists( 'illdy_is_not_imported' ) ) {
-	function illdy_is_not_imported() {
-
-		if ( defined( "ILLDY_COMPANION" ) ) {
-			$illdy_show_required_actions = get_option( 'illdy_show_required_actions' );
-			if ( isset( $illdy_show_required_actions['illdy-req-import-content'] ) ) {
-				return true;
-			} else {
-				return false;
-			}
+		if ( ! isset( $wp_customize ) && 'preloader_enabled' == $preloader_enabled ) {
+			wp_enqueue_script( 'pathloader-js' );
+			wp_enqueue_script( 'pace-loader-min-js' );
+			wp_enqueue_script( 'pixova-lite-preloader' );
 		} else {
-			return true;
+			add_action( 'wp_head', 'pixova_lite_output_css_to_head' );
 		}
 
-	}
-}
+		wp_enqueue_script( 'bootstrap-min-js' );
+		wp_enqueue_script( 'pixova-sticky-js' );
+		wp_enqueue_script( 'owlCarousel-js' );
+		wp_enqueue_script( 'classie-js' );
+		wp_enqueue_script( 'simple-placeholder-js' );
+		wp_enqueue_script( 'smooth-scroll-js' );
+		wp_enqueue_script( 'viewport-min-js' );
+		wp_enqueue_script( 'parallax-min-js' );
 
+		# Animations Enabled ?
+		$animations_enabled = get_theme_mod( 'pixova_lite_animations_enabled', 'animations_enabled' );
 
-/**
- *    Set the content width in pixels, based on the theme's design and stylesheet.
- *
- *    Priority 0 to make it available to lower priority callbacks.
- *
- * @global int $content_width
- */
-if ( ! function_exists( 'illdy_content_width' ) ) {
-	add_action( 'after_setup_theme', 'illdy_content_width', 0 );
-	function illdy_content_width() {
-		$GLOBALS['content_width'] = apply_filters( 'illdy_content_width', 640 );
-	}
-}
+		if ( 'animations_enabled' == $animations_enabled ) {
+			wp_enqueue_script( 'wow-min-js' );
+		}
 
-/**
- *    WP Enqueue Stylesheets
- */
-if ( ! function_exists( 'illdy_enqueue_stylesheets' ) ) {
-	add_action( 'wp_enqueue_scripts', 'illdy_enqueue_stylesheets' );
-
-	function illdy_enqueue_stylesheets() {
-
-		// Google Fonts
-		$google_fonts_args = array(
-			'family' => 'Source+Sans+Pro:400,900,700,300,300italic|Lato:300,400,700,900|Poppins:300,400,500,600,700',
+		#
+		# Localize Plugins JS
+		#
+		$pixova_lite_plugins_options = array(
+			'animations_enabled' => $animations_enabled,
 		);
 
-		// WP Register Style
-		wp_register_style( 'illdy-google-fonts', add_query_arg( $google_fonts_args, 'https://fonts.googleapis.com/css' ), array(), null );
+		wp_localize_script( 'pixova-lite-plugins-js', 'pixova_lite_localization', $pixova_lite_plugins_options );
+		wp_enqueue_script( 'pixova-lite-plugins-js' );
 
-		// WP Enqueue Style
-		if ( get_theme_mod( 'illdy_preloader_enable', 1 ) == 1 ) {
-			wp_enqueue_style( 'illdy-pace', get_template_directory_uri() . '/layout/css/pace.min.css', array(), '', 'all' );
+		#
+		# Localize Scripts JS
+		#
+
+		# Header Text Parallax Effect ?
+		$parallax_enabed = get_theme_mod( 'pixova_lite_header_effect_enabled', 'header_effect_enabled' );
+
+		$pixova_lite_scripts_options = array(
+			'parallax_enabled'   => $parallax_enabed,
+			'animations_enabled' => $animations_enabled,
+		);
+
+		wp_localize_script( 'pixova-lite-scripts-js', 'pixova_lite_localization', $pixova_lite_scripts_options );
+		wp_enqueue_script( 'pixova-lite-scripts-js' );
+
+		// Animate CSS
+		if ( 'animations_enabled' == $animations_enabled ) {
+			wp_enqueue_style( 'animate-min-css', get_template_directory_uri() . '/layout/css/animate.min.css' );
 		}
 
-		wp_enqueue_style( 'illdy-google-fonts' );
-		wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/layout/css/bootstrap.min.css', array(), '3.3.6', 'all' );
-		wp_enqueue_style( 'bootstrap-theme', get_template_directory_uri() . '/layout/css/bootstrap-theme.min.css', array(), '3.3.6', 'all' );
-		wp_enqueue_style( 'font-awesome', get_template_directory_uri() . '/layout/css/font-awesome.min.css', array(), '4.5.0', 'all' );
-		wp_enqueue_style( 'owl-carousel', get_template_directory_uri() . '/layout/css/owl-carousel.min.css', array(), '2.0.0', 'all' );
-		if ( get_theme_mod( 'illdy_projects_lightbox', 0 ) == 1 ) {
-			wp_enqueue_style( 'illdy-fancybox', get_template_directory_uri() . '/layout/css/jquery.fancybox.css', array(), '', 'all' );
+		// Font Awesome Stylesheet
+		wp_enqueue_style( 'font-awesome-min-css', get_template_directory_uri() . '/layout/css/font-awesome.min.css' );
+
+		// Google Fonts StyleSheet
+		wp_enqueue_style( 'ga-fonts', pixova_lite_fonts_url() );
+
+		// Bootstrap Stylesheet
+		wp_enqueue_style( 'bootstrap-min-css', get_template_directory_uri() . '/layout/css/bootstrap.min.css' );
+
+		// owlCarousel Stylesheet
+		wp_enqueue_style( 'owlCarousel-main-css', get_template_directory_uri() . '/layout/css/owl.carousel.css' );
+		wp_enqueue_style( 'owlCarousel-theme-css', get_template_directory_uri() . '/layout/css/owl.theme.css' );
+
+		if ( function_exists( 'is_woocommerce' ) ) {
+			wp_enqueue_style( 'pixova-lite-woocommerce-min-css', get_template_directory_uri() . '/layout/css/pixova-woocommerce.min.css' );
 		}
-		wp_enqueue_style( 'illdy-main', get_template_directory_uri() . '/layout/css/main.css', array(), '', 'all' );
-		wp_enqueue_style( 'illdy-custom', get_template_directory_uri() . '/layout/css/custom.min.css', array(), '', 'all' );
-		wp_enqueue_style( 'illdy-style', get_stylesheet_uri(), array(), '1.0.16', 'all' );
+
+		// General theme Stylesheet
+		wp_enqueue_style( 'pixova-lite-min-css', get_template_directory_uri() . '/layout/css/style.min.css' );
+		wp_enqueue_style( 'pixova-lite-min-style', get_stylesheet_uri() );
+
+	} // function pixova_lite_enqueue_scripts end
+
+	add_action( 'wp_enqueue_scripts', 'pixova_lite_enqueue_scripts' );
+
+} // End if().
+
+if ( ! function_exists( 'pixova_lite_child_manage_woocommerce_styles' ) ) {
+	/**
+	 * Optimize WooCommerce Scripts
+	 * Remove WooCommerce Generator tag, styles, and scripts from non WooCommerce pages.
+	 *
+	 * @since Pixova Lite 1.0.9
+	 */
+
+	function pixova_lite_child_manage_woocommerce_styles() {
+		//first check that woo exists to prevent fatal errors
+		if ( function_exists( 'is_woocommerce' ) ) {
+
+			//remove generator meta tag
+			remove_action( 'wp_head', array( $GLOBALS['woocommerce'], 'generator' ) );
+
+			//dequeue scripts and styles
+			if ( ! is_woocommerce() && ! is_cart() && ! is_checkout() ) {
+				wp_dequeue_style( 'woocommerce-general' );
+				wp_dequeue_style( 'woocommerce-layout' );
+				wp_dequeue_style( 'woocommerce-smallscreen' );
+				wp_dequeue_style( 'woocommerce_frontend_styles' );
+				wp_dequeue_style( 'woocommerce_fancybox_styles' );
+				wp_dequeue_style( 'woocommerce_chosen_styles' );
+				wp_dequeue_style( 'woocommerce_prettyPhoto_css' );
+				wp_dequeue_script( 'wc_price_slider' );
+				wp_dequeue_script( 'wc-single-product' );
+				wp_dequeue_script( 'wc-add-to-cart' );
+				wp_dequeue_script( 'wc-cart-fragments' );
+				wp_dequeue_script( 'wc-checkout' );
+				wp_dequeue_script( 'wc-add-to-cart-variation' );
+				wp_dequeue_script( 'wc-single-product' );
+				wp_dequeue_script( 'wc-cart' );
+				wp_dequeue_script( 'wc-chosen' );
+				wp_dequeue_script( 'woocommerce' );
+				wp_dequeue_script( 'prettyPhoto' );
+				wp_dequeue_script( 'prettyPhoto-init' );
+				wp_dequeue_script( 'jquery-blockui' );
+				wp_dequeue_script( 'jquery-placeholder' );
+				wp_dequeue_script( 'fancybox' );
+				wp_dequeue_script( 'jqueryui' );
+			}
+		}
 	}
-}
+	add_action( 'wp_enqueue_scripts', 'pixova_lite_child_manage_woocommerce_styles', 99 );
+}// End if().
 
 
-/**
- *    WP Enqueue JavaScripts
- */
-if ( ! function_exists( 'illdy_enqueue_javascripts' ) ) {
-	add_action( 'wp_enqueue_scripts', 'illdy_enqueue_javascripts' );
-
-	function illdy_enqueue_javascripts() {
-		if ( get_theme_mod( 'illdy_preloader_enable', 1 ) == 1 ) {
-			wp_enqueue_script( 'illdy-pace', get_template_directory_uri() . '/layout/js/pace/pace.min.js', array( 'jquery' ), '', false );
-		}
-		wp_enqueue_script( 'jquery-ui-progressbar', '', array( 'jquery' ), '', true );
-		wp_enqueue_script( 'illdy-bootstrap', get_template_directory_uri() . '/layout/js/bootstrap/bootstrap.min.js', array( 'jquery' ), '3.3.6', true );
-		wp_enqueue_script( 'illdy-owl-carousel', get_template_directory_uri() . '/layout/js/owl-carousel/owl-carousel.min.js', array( 'jquery' ), '2.0.0', true );
-		wp_enqueue_script( 'illdy-count-to', get_template_directory_uri() . '/layout/js/count-to/count-to.min.js', array( 'jquery' ), '', true );
-		wp_enqueue_script( 'illdy-visible', get_template_directory_uri() . '/layout/js/visible/visible.min.js', array( 'jquery' ), '', true );
-		if ( get_theme_mod( 'illdy_projects_lightbox', 0 ) == 1 ) {
-			wp_enqueue_script( 'illdy-fancybox', get_template_directory_uri() . '/layout/js/jquery.fancybox.js', array( 'jquery' ), '', true );
-			wp_add_inline_script( 'illdy-fancybox', 'jQuery(".fancybox").fancybox();' );
-		}
-		wp_enqueue_script( 'illdy-parallax', get_template_directory_uri() . '/layout/js/parallax.min.js', array( 'jquery' ), '1.0.16', true );
-		wp_enqueue_script( 'illdy-plugins', get_template_directory_uri() . '/layout/js/plugins.min.js', array( 'jquery' ), '1.0.16', true );
-		wp_enqueue_script( 'illdy-scripts', get_template_directory_uri() . '/layout/js/scripts.min.js', array( 'jquery' ), '1.0.16', true );
-		if ( is_front_page() ) {\
-			wp_add_inline_script( 'illdy-scripts', 'if( jQuery(\'.blog-carousel > .illdy-blog-post\').length > 3 ){jQuery(\'.blog-carousel\').owlCarousel({\'items\': 3,\'loop\': true,\'dots\': false,\'nav\' : true, \'navText\':[\'<i class="fa fa-angle-left" aria-hidden="true"></i>\',\'<i class="fa fa-angle-right" aria-hidden="true"></i>\'], responsive : { 0 : { items : 1 }, 480 : { items : 2 }, 900 : { items : 3 } }});}' );
-		}
+if ( ! function_exists( 'pixova_lite_comment_reply_js' ) ) {
+	/**
+	 * Function that only loads the comment-reply JS script on pages that have the comment form enabled
+	 *
+	 * Given that we have a one page website, is_singular() will return true for pages as well (that means it gets loaded on the homepage for nothing)
+	 *
+	 * @since Pixova Lite 1.0.0
+	 */
+	function pixova_lite_comment_reply_js() {
 
 		if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 			wp_enqueue_script( 'comment-reply' );
 		}
 	}
+	add_action( 'comment_form_before', 'pixova_lite_comment_reply_js' );
 }
 
+// Fallback nav menu
+if ( ! function_exists( 'pixova_lite_fallback_cb' ) ) {
+	/**
+	 * Nav menu fallback function
+	 *
+	 * @since Pixova Lite 1.11
+	 *
+	 */
+	function pixova_lite_fallback_cb() {
+
+		$html          = '<ul id="menu-pixova-lite-main-menu-container" class="pixova-default-menu">';
+		$html         .= '<li class="menu-item menu-item-type-custom menu-item-object-custom">';
+			$html     .= '<a href="' . get_site_url() . '/#about" title="' . __( 'About', 'pixova-lite' ) . '">';
+				$html .= __( 'About', 'pixova-lite' );
+			$html     .= '</a>';
+		$html         .= '</li>';
+
+		$html         .= '<li class="menu-item menu-item-type-custom menu-item-object-custom">';
+			$html     .= '<a href="' . get_site_url() . '/#works" title="' . __( 'Recent Works', 'pixova-lite' ) . '">';
+				$html .= __( 'Recent Works', 'pixova-lite' );
+			$html     .= '</a>';
+		$html         .= '</li>';
+
+		$html         .= '<li class="menu-item menu-item-type-custom menu-item-object-custom">';
+			$html     .= '<a href="' . get_site_url() . '/#testimonials" title="' . __( 'Testimonials', 'pixova-lite' ) . '">';
+				$html .= __( 'Testimonials', 'pixova-lite' );
+			$html     .= '</a>';
+		$html         .= '</li>';
+
+		$html         .= '<li class="menu-item menu-item-type-custom menu-item-object-custom">';
+			$html     .= '<a href="' . get_site_url() . '/#team" title="' . __( 'Team', 'pixova-lite' ) . '">';
+				$html .= __( 'Team', 'pixova-lite' );
+			$html     .= '</a>';
+		$html         .= '</li>';
+
+		$html         .= '<li class="menu-item menu-item-type-custom menu-item-object-custom">';
+			$html     .= '<a href="' . get_site_url() . '/#news" title="' . __( 'News', 'pixova-lite' ) . '">';
+				$html .= __( 'News', 'pixova-lite' );
+			$html     .= '</a>';
+		$html         .= '</li>';
+
+		$html         .= '<li class="menu-item menu-item-type-custom menu-item-object-custom">';
+			$html     .= '<a href="' . get_site_url() . '/#contact" title="' . __( 'Contact', 'pixova-lite' ) . '">';
+				$html .= __( 'Contact', 'pixova-lite' );
+			$html     .= '</a>';
+		$html         .= '</li>';
+
+		if ( function_exists( 'is_woocommerce' ) ) {
+			$html         .= '<li class="menu-item menu-item-type-custom menu-item-object-custom">';
+				$html     .= '<a href="' . get_site_url() . '/shop/" title="' . __( 'Shop', 'pixova-lite' ) . '">';
+					$html .= __( 'Shop', 'pixova-lite' );
+				$html     .= '</a>';
+			$html         .= '</li>';
+		}
+		$html .= '</ul>';
+		echo $html;
+	}
+}// End if().
+
+if ( ! function_exists( 'pixova_lite_fonts_url' ) ) {
+	/**
+	 * Register Google fonts for Pixova Lite.
+	 *
+	 * @since Pixova Lite 1.16
+	 *
+	 * @return string Google fonts URL for the theme.
+	 */
+	function pixova_lite_fonts_url() {
+		$fonts_url = '';
+		$fonts     = array();
+		$subsets   = 'latin,latin-ext';
+
+		/*
+         * Translators: If there are characters in your language that are not supported
+         * by Source Sans Pro Sans Serif, translate this to 'off'. Do not translate into your own language.
+         */
+		if ( 'off' !== _x( 'on', 'Poppins font: on or off', 'pixova-lite' ) ) {
+			$fonts[] = 'Poppins:600';
+		}
+
+		/*
+         * Translators: If there are characters in your language that are not supported
+         * by Souce Sans Pro Sans Serif, translate this to 'off'. Do not translate into your own language.
+         */
+		if ( 'off' !== _x( 'on', 'Roboto: on or off', 'pixova-lite' ) ) {
+			$fonts[] = 'Roboto:400,500,700,400italic,700italic';
+		}
+
+		/*
+         * Translators: If there are characters in your language that are not supported
+         * by Inconsolata, translate this to 'off'. Do not translate into your own language.
+         */
+		if ( 'off' !== _x( 'on', 'Inconsolata font: on or off', 'pixova-lite' ) ) {
+			$fonts[] = 'Inconsolata:400,700';
+		}
+
+		/*
+         * Translators: To add an additional character subset specific to your language,
+         * translate this to 'greek', 'cyrillic', 'devanagari' or 'vietnamese'. Do not translate into your own language.
+         */
+		$subset = _x( 'no-subset', 'Add new subset (latin-extended, vietnamese)', 'pixova-lite' );
+
+		if ( 'latin-extended' == $subset ) {
+			$subsets .= ',latin,latin-ext';
+		} elseif ( 'vietnamese' == $subset ) {
+			$subsets .= ',vietnamese';
+		}
+
+		if ( $fonts ) {
+			$fonts_url = add_query_arg(
+				array(
+					'family' => urlencode( implode( '|', $fonts ) ),
+					'subset' => urlencode( $subsets ),
+				), '//fonts.googleapis.com/css'
+			);
+		}
+
+		return $fonts_url;
+	}
+}// End if().
+
+if ( ! function_exists( 'pixova_lite_add_default_widgets' ) ) {
+	/**
+	* Function to import widgets based on a JSON config file
+	* JSON file is generated using plugin: Widget Importer / Exporter
+	* @link https://github.com/stevengliebe/widget-importer-exporter
+	*/
+	function pixova_lite_add_default_widgets() {
+
+		$json             = '{"orphaned_widgets_1":{"woocommerce_price_filter-2":{"title":"Filter by price"},"woocommerce_products-2":{"title":"Products","number":"5","show":"","orderby":"date","order":"desc","hide_free":0,"show_hidden":0},"woocommerce_product_tag_cloud-2":{"title":"Product Tags"},"woocommerce_recent_reviews-2":{"title":"Recent Reviews","number":"10"}},"shop-sidebar":{"woocommerce_price_filter-2":{"title":"Filter by price"},"woocommerce_products-2":{"title":"Products","number":"5","show":"","orderby":"date","order":"desc","hide_free":0,"show_hidden":0},"woocommerce_product_tag_cloud-2":{"title":"Product Tags"},"woocommerce_recent_reviews-2":{"title":"Recent Reviews","number":"10"}},"blog-sidebar":{"search-2":{"title":""},"recent-posts-2":{"title":"","number":5},"recent-comments-2":{"title":"","number":5},"archives-2":{"title":"","count":0,"dropdown":0},"categories-2":{"title":"","count":0,"hierarchical":0,"dropdown":0},"meta-2":{"title":""}},"footer-sidebar-1":{"pixova_lite_widget_about-2":{"title":"About","about_text":"The many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected true of a humour.\r\n\r\n","show_title":"1"}},"footer-sidebar-2":{"text-2":{"title":"Quick nav","text":"  <ul id=\"menu-pixova-footer-menu\" class=\"menu\">\r\n                                        <li class=\"menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item\"><a href=\"#about\">About<\/a><\/li>\r\n                                        <li class=\"menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item\"><a href=\"#works\">Recent Works<\/a><\/li>\r\n                                        <li class=\"menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item\"><a href=\"#testimonials\">Testimonials<\/a><\/li>\r\n                                        <li class=\"menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item\"><a href=\"#news\">News<\/a><\/li>\r\n                                        <li class=\"menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item\"><a href=\"#team\">Team<\/a><\/li>\r\n                                        <li class=\"menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item\"><a href=\"#contact\">Contact<\/a><\/li>\r\n                                    <\/ul>","filter":false}},"footer-sidebar-3":{"pixova_lite_widget_latest_posts-2":{"title":"Latest post","items":"1","show_title":"1"}},"footer-sidebar-4":{"pixova_lite_widget_social_media-3":{"title":"Follow us","profile_facebook":" ","profile_twitter":" ","profile_plus":" ","profile_pinterest":" ","profile_youtube":" ","profile_dribbble":" ","profile_tumblr":" ","profile_instagram":" ","profile_github":" ","profile_bitbucket":" ","profile_codepen":"","show_title":""}}}';
+		$config           = json_decode( $json );
+		$sidebars_widgets = get_option( 'sidebars_widgets' );
+
+		# Parse config
+		foreach ( $config as $sidebar => $elemements ) {
+			# verify if the sidebar doesn't have ny widgets
+			if ( strpos( $sidebar, 'orphaned_widgets' ) === false && ! is_active_sidebar( $sidebar ) ) {
+				# create an empty array for active widgets
+				$this_sidebar_active_widgets = array();
+				# parse all widgets for current sidebar
+				foreach ( $elemements as $id_widget => $args ) {
+					# add current widget to current sidebar
+					$this_sidebar_active_widgets[] = $id_widget;
+					# split widget name in order to get widget name and index
+					$id_widget_parts = explode( '-',$id_widget );
+					# get widget index
+					$index_widget = end( $id_widget_parts );
+					#remove widget index from array
+					array_pop( $id_widget_parts );
+					#generate widget name
+					$widget_name = implode( '-', $id_widget_parts );
+					#get all widgets who are like current widget
+					$widgets = get_option( 'widget_' . $widget_name );
+					#check if current index exist in array
+					if ( ! isset( $widgets[ $index_widget ] ) ) {
+						#add current widget with his index and args
+						$widgets[ $index_widget ] = get_object_vars( $args );
+					}
+					#update widgets who are like current widget
+					update_option( 'widget_' . $widget_name, $widgets );
+				}
+				$sidebars_widgets[ $sidebar ] = $this_sidebar_active_widgets;
+			}
+		}
+		update_option( 'sidebars_widgets', $sidebars_widgets );
+	}
+}// End if().
+
+
+// Include epsilon framework
+require_once get_template_directory() . '/inc/libraries/epsilon-framework/class-epsilon-autoloader.php';
+new Epsilon_Framework();
 
 /**
- *    Widgets
+ * Instantiate the Epsilon Typography object
  */
-if ( ! function_exists( 'illdy_widgets' ) ) {
-	add_action( 'widgets_init', 'illdy_widgets' );
+$options = array(
+	'pixova_lite_heading_1',
+	'pixova_lite_heading_2',
+	'pixova_lite_heading_3',
+	'pixova_lite_heading_4',
+	'pixova_lite_heading_5',
+	'pixova_lite_heading_6',
+);
 
-	function illdy_widgets() {
-
-		// Blog Sidebar
-		register_sidebar( array(
-			'name'          => __( 'Blog Sidebar', 'illdy' ),
-			'id'            => 'blog-sidebar',
-			'description'   => __( 'The widgets added in this sidebar will appear in blog page.', 'illdy' ),
-			'before_widget' => '<div id="%1$s" class="widget %2$s">',
-			'after_widget'  => '</div>',
-			'before_title'  => '<div class="widget-title"><h5>',
-			'after_title'   => '</h5></div>',
-		) );
-
-		// Page Sidebar
-		register_sidebar( array(
-			'name'          => __( 'Page Sidebar', 'illdy' ),
-			'id'            => 'page-sidebar',
-			'description'   => __( 'The widgets added in this sidebar will appear on single pages.', 'illdy' ),
-			'before_widget' => '<div id="%1$s" class="widget %2$s">',
-			'after_widget'  => '</div>',
-			'before_title'  => '<div class="widget-title"><h5>',
-			'after_title'   => '</h5></div>',
-		) );
-
-		// Footer Sidebar 1
-		register_sidebar( array(
-			'name'          => __( 'Footer Sidebar 1', 'illdy' ),
-			'id'            => 'footer-sidebar-1',
-			'description'   => __( 'The widgets added in this sidebar will appear in first block from footer.', 'illdy' ),
-			'before_widget' => '<div id="%1$s" class="widget %2$s">',
-			'after_widget'  => '</div>',
-			'before_title'  => '<div class="widget-title"><h5>',
-			'after_title'   => '</h5></div>',
-		) );
-
-		// Footer Sidebar 2
-		register_sidebar( array(
-			'name'          => __( 'Footer Sidebar 2', 'illdy' ),
-			'id'            => 'footer-sidebar-2',
-			'description'   => __( 'The widgets added in this sidebar will appear in second block from footer.', 'illdy' ),
-			'before_widget' => '<div id="%1$s" class="widget %2$s">',
-			'after_widget'  => '</div>',
-			'before_title'  => '<div class="widget-title"><h5>',
-			'after_title'   => '</h5></div>',
-		) );
-
-		// Footer Sidebar 3
-		register_sidebar( array(
-			'name'          => __( 'Footer Sidebar 3', 'illdy' ),
-			'id'            => 'footer-sidebar-3',
-			'description'   => __( 'The widgets added in this sidebar will appear in third block from footer.', 'illdy' ),
-			'before_widget' => '<div id="%1$s" class="widget %2$s">',
-			'after_widget'  => '</div>',
-			'before_title'  => '<div class="widget-title"><h5>',
-			'after_title'   => '</h5></div>',
-		) );
-
-		// Footer Sidebar 4
-		register_sidebar( array(
-			'name'          => __( 'Footer Sidebar 4', 'illdy' ),
-			'id'            => 'footer-sidebar-4',
-			'description'   => __( 'The widgets added in this sidebar will appear in fourth block from footer.', 'illdy' ),
-			'before_widget' => '<div id="%1$s" class="widget %2$s">',
-			'after_widget'  => '</div>',
-			'before_title'  => '<div class="widget-title"><h5>',
-			'after_title'   => '</h5></div>',
-		) );
-
-		// About Sidebar
-		register_sidebar( array(
-			'name'          => __( 'Front page - About Sidebar', 'illdy' ),
-			'id'            => 'front-page-about-sidebar',
-			'description'   => __( 'The widgets added in this sidebar will appear in about section from front page.', 'illdy' ),
-			'before_widget' => '<div id="%1$s" class="col-sm-4 col-sm-offset-0 col-xs-10 col-xs-offset-1 col-lg-4 col-lg-offset-0 %2$s">',
-			'after_widget'  => '</div>',
-			'before_title'  => '',
-			'after_title'   => '',
-		) );
-
-		// Projects Sidebar
-		register_sidebar( array(
-			'name'          => __( 'Front page - Projects Sidebar', 'illdy' ),
-			'id'            => 'front-page-projects-sidebar',
-			'description'   => __( 'The widgets added in this sidebar will appear in projects section from front page.', 'illdy' ),
-			'before_widget' => '<div id="%1$s" class="col-sm-3 col-xs-6 no-padding %2$s">',
-			'after_widget'  => '</div>',
-			'before_title'  => '',
-			'after_title'   => '',
-		) );
-
-		// Services Sidebar
-		register_sidebar( array(
-			'name'          => __( 'Front page - Services Sidebar', 'illdy' ),
-			'id'            => 'front-page-services-sidebar',
-			'description'   => __( 'The widgets added in this sidebar will appear in services section from front page.', 'illdy' ),
-			'before_widget' => '<div id="%1$s" class="col-sm-4 %2$s">',
-			'after_widget'  => '</div>',
-			'before_title'  => '',
-			'after_title'   => '',
-		) );
-
-		// Counter Sidebar
-		register_sidebar( array(
-			'name'          => __( 'Front page - Counter Sidebar', 'illdy' ),
-			'id'            => 'front-page-counter-sidebar',
-			'description'   => __( 'The widgets added in this sidebar will appear in counter section from front page.', 'illdy' ),
-			'before_widget' => '<div id="%1$s" class="col-sm-4 col-xs-12 %2$s">',
-			'after_widget'  => '</div>',
-			'before_title'  => '',
-			'after_title'   => '',
-		) );
-
-		// Team Sidebar
-		register_sidebar( array(
-			'name'          => __( 'Front page - Team Sidebar', 'illdy' ),
-			'id'            => 'front-page-team-sidebar',
-			'description'   => __( 'The widgets added in this sidebar will appear in team section from front page.', 'illdy' ),
-			'before_widget' => '<div id="%1$s" class="col-sm-4 col-sm-offset-0 col-xs-10 col-xs-offset-1 %2$s">',
-			'after_widget'  => '</div>',
-			'before_title'  => '',
-			'after_title'   => '',
-		) );
-
-		// Full Width
-		register_sidebar( array(
-			'name'          => __( 'Front page - Full Width Section', 'illdy' ),
-			'id'            => 'front-page-full-width-sidebar',
-			'description'   => __( 'The widgets added in this sidebar will appear in full width section from front page.', 'illdy' ),
-			'before_widget' => '<div id="%1$s" class="widget %2$s">',
-			'after_widget'  => '</div>',
-			'before_title'  => '<div class="widget-title"><h5>',
-			'after_title'   => '</h5></div>',
-		) );
-
-		// Testimonial Sidebar
-		register_sidebar( array(
-			'name'          => __( 'Front page - Testimonials Sidebar', 'illdy' ),
-			'id'            => 'front-page-testimonials-sidebar',
-			'description'   => __( 'The widgets added in this sidebar will appear in testimonials section from front page.', 'illdy' ),
-			'before_widget' => '<div id="%1$s" class="%2$s">',
-			'after_widget'  => '</div>',
-			'before_title'  => '',
-			'after_title'   => '',
-		) );
-
-		// WooCommerce Sidebar
-		if ( class_exists( 'WooCommerce' ) ) {
-			register_sidebar( array(
-				'name'          => __( 'WooCommerce Sidebar', 'illdy' ),
-				'id'            => 'woocommerce-sidebar',
-				'description'   => __( 'The widgets added in this sidebar will appear in WooCommerce pages.', 'illdy' ),
-				'before_widget' => '<div id="%1$s" class="widget %2$s">',
-				'after_widget'  => '</div>',
-				'before_title'  => '<div class="widget-title"><h5>',
-				'after_title'   => '</h5></div>',
-			) );
-		}
-	}
-}
-
+$handler = 'pixova-lite-min-style';
+Epsilon_Typography::get_instance( $options, $handler );
 
 /**
- *  Checkbox helper function
+ * Instantiate the Epsilon Color Scheme object
  */
-if ( ! function_exists( 'illdy_value_checkbox_helper' ) ) {
-	function illdy_value_checkbox_helper( $value ) {
-		if ( $value == 1 ) {
-			return 1;
-		} else {
-			return 0;
-		}
-	}
-}
+$handler = 'pixova-lite-min-style';
 
-add_action( 'illdy_after_content_above_footer', "illdy_pagination", 1 );
+$args = array(
+	'fields' => array(
+		'pixova_lite_accent_color'           => array(
+			'label'       => __( 'Accent Color', 'pixova-lite' ),
+			'description' => __( 'The main color used for links, buttons, and more.', 'pixova-lite' ),
+			'default'     => '#ffce55',
+			'section'     => 'pixova_lite_colors',
+			'hover-state' => true,
+		),
 
-function illdy_pagination() {
-	the_posts_pagination( array(
-		'prev_text'          => '<i class="fa fa-angle-left"></i>',
-		'next_text'          => '<i class="fa fa-angle-right"></i>',
-		'screen_reader_text' => '',
-	) );
-}
+		'pixova_lite_heading_color'          => array(
+			'label'       => __( 'Heading Color', 'pixova-lite' ),
+			'description' => __( 'The color used for headings.', 'pixova-lite' ),
+			'default'     => '#222533',
+			'section'     => 'pixova_lite_colors',
+			'hover-state' => false,
+		),
 
+		'pixova_lite_text_color'             => array(
+			'label'       => __( 'Text Color', 'pixova-lite' ),
+			'description' => __( 'The color used for paragraphs, links, etc.', 'pixova-lite' ),
+			'default'     => '#777',
+			'section'     => 'pixova_lite_colors',
+			'hover-state' => false,
+		),
 
-if ( !function_exists( 'illdy_get_random_featured_image' ) ) {
-	function illdy_get_random_featured_image() {
-		$featured_image_list = array(
-			'random-blog-post-1.jpg',
-			'random-blog-post-2.jpg',
-			'random-blog-post-3.jpg',
-			'random-blog-post-4.jpg',
-			'random-blog-post-5.jpg',
-		);
-		$number = rand(0,4);
-		return get_template_directory_uri().'/layout/images/blog/'.$featured_image_list[$number];
-	}
-}
+		'pixova_lite_hover_color'            => array(
+			'label'       => __( 'Hover Color', 'pixova-lite' ),
+			'description' => __( 'The color used for hover on elements.', 'pixova-lite' ),
+			'default'     => '#ffce55',
+			'section'     => 'pixova_lite_colors',
+			'hover-state' => true,
+		),
 
-if ( !function_exists( 'illdy_get_recommended_actions_url' ) ) {
-	function illdy_get_recommended_actions_url() {
-		return self_admin_url( 'themes.php?page=illdy-welcome&tab=recommended_actions' );
-	}
-}
+		'pixova_lite_footer_bg_color'        => array(
+			'label'       => __( 'Footer Background Color', 'pixova-lite' ),
+			'description' => __( 'The color used for the footer background.', 'pixova-lite' ),
+			'default'     => '#1f1f1f',
+			'section'     => 'pixova_lite_colors',
+			'hover-state' => false,
+		),
+
+		'pixova_lite_footer_widget_bg_color' => array(
+			'label'       => __( 'Footer Widget Background Color', 'pixova-lite' ),
+			'description' => __( 'The color used for the footer widgets background.', 'pixova-lite' ),
+			'default'     => '#313233',
+			'section'     => 'pixova_lite_colors',
+			'hover-state' => false,
+		),
+
+	),
+
+	'css'    => Epsilon_Color_Scheme::load_css_overrides( get_template_directory() . '/layout/css/style-overrides.css' ),
+);
+
+Epsilon_Color_Scheme::get_instance( $handler, $args );

@@ -1,37 +1,35 @@
-<?php
-/**
- *	The template for dispalying the page.
- *
- *	@package WordPress
- *	@subpackage illdy
- */
-?>
 <?php get_header(); ?>
-<div class="container">
-	<div class="row">
-		<?php if ( is_active_sidebar( 'page-sidebar' ) ) { ?>
-		<div class="col-sm-8">
-			<?php } else { ?>
-			<div class="col-sm-8 col-sm-offset-2">
-				<?php } ?>
-			<section id="blog">
-				<?php
-				if( have_posts() ):
-					while( have_posts() ):
-						the_post();
-						get_template_part( 'template-parts/content', 'page' );
-					endwhile;
-				endif;
-				?>
-			</section><!--/#blog-->
-		</div><!--/.col-sm-7-->
-		<?php if ( is_active_sidebar( 'page-sidebar' ) ) { ?>
-			<div class="col-sm-4">
-				<div id="sidebar">
-					<?php dynamic_sidebar( 'page-sidebar' ); ?>
-				</div>
-			</div>
-		<?php } ?>
-	</div><!--/.row-->
-</div><!--/.container-->
+
+<div class="has-padding">
+	<div id="primary" class="content-area">
+		<main id="main" class="site-main">
+			<?php
+			while ( have_posts() ) :
+				the_post();
+?>
+				<div class="container">
+					<div class="row">
+							<div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+								<div class="entry-content">
+									<?php
+									the_content();
+
+									wp_link_pages(
+										array(
+											'before' => '<nav class="page-links">' . __( 'Pages:', 'pixova-lite' ),
+											'after'  => '</nav>',
+										)
+									);
+									?>
+								</div><!-- .entry-content -->
+							</div><!-- #post-## -->
+						<?php comments_template(); ?>
+					</div><!--/.row-->
+				</div><!--/.container-->
+			<?php
+			endwhile; // end of the loop.
+			?>
+		</main><!-- #main -->
+	</div><!-- #primary -->
+</div>
 <?php get_footer(); ?>

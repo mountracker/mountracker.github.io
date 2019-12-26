@@ -1,25 +1,43 @@
-<?php
-/**
- *    The template for dispalying the content.
- *
- * @package    WordPress
- * @subpackage illdy
- */
-?>
-<article id="post-<?php the_ID(); ?>" <?php post_class( 'blog-post' ); ?>>
-	<a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>" class="blog-post-title"><?php the_title(); ?></a>
-	<?php if ( has_post_thumbnail() ){ ?>
-		<div class="blog-post-image">
-			<a href="<?php echo get_the_permalink(); ?>"><?php the_post_thumbnail( 'illdy-blog-list' ); ?></a>
-		</div><!--/.blog-post-image-->
-	<?php }elseif ( get_theme_mod( 'illdy_disable_random_featured_image' ) ) { ?>
-		<div class="blog-post-image">
-			<a href="<?php echo get_the_permalink(); ?>"><img src="<?php echo illdy_get_random_featured_image(); ?>"></a>
-		</div><!--/.blog-post-image-->
+<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+
+	<header class="entry-header">
+		<?php the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+	</header><!-- .entry-header -->
+	<div class="entry-meta">
+		<?php
+		printf(
+
+			// Translators: 1 is the post author, 2 is the category list.
+			__( '<span class="post-meta-separator"><i class="fa fa-user"></i>%1$s</span><span class="post-meta-separator"><i class="fa fa-calendar"></i>%2$s</span><span class="post-meta-separator"><i class="fa fa-comment"></i>%3$s</span><span class="post-meta-separator"><i class="fa fa-folder"></i>%4$s</span>', 'pixova-lite' ), get_the_author_link(),
+			// Translators: Post time
+			get_the_date( get_option( 'date_format' ), $post->ID ),
+			// Translators: Number of com,ments
+			pixova_lite_get_number_of_comments( $post->ID ),
+			// Translators: tag list
+			get_the_tag_list( 'Tags: ', ', ', '' )
+		);
+		?>
+	</div><!--/.entry-meta-->
+	<?php if ( has_post_thumbnail() ) { ?>
+		<aside class="entry-featured-image">
+			<?php echo get_the_post_thumbnail( $post->ID, 'pixova-lite-featured-blog-image' ); ?>
+		</aside><!--/.entry-featured-image-->
 	<?php } ?>
-	<?php do_action( 'illdy_archive_meta_content' ); ?>
-	<div class="blog-post-entry">
-		<?php the_excerpt(); ?>
-	</div><!--/.blog-post-entry-->
-	<a href="<?php the_permalink(); ?>" title="<?php _e( 'Read more', 'illdy' ); ?>" class="blog-post-button"><?php _e( 'Read more', 'illdy' ); ?></a>
-</article><!--/#post-<?php the_ID(); ?>.blog-post-->
+
+	<div class="entry-content">
+		<?php
+
+		echo the_excerpt();
+
+		wp_link_pages(
+			array(
+				'before' => '<div class="page-links">' . __( 'Pages:', 'pixova-lite' ),
+				'after'  => '</div>',
+			)
+		);
+
+		?>
+	</div><!-- .entry-content -->
+
+	<div class="clearfix"></div><!--/.clearfix-->
+</article><!-- #post-## -->

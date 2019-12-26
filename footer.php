@@ -1,77 +1,108 @@
 <?php
-/**
- *    The template for dispalying the footer.
- *
- * @package    WordPress
- * @subpackage illdy
- */
-?>
-<?php
 
-if ( current_user_can( 'edit_theme_options' ) ) {
-	$footer_copyright  = get_theme_mod( 'illdy_footer_copyright', __( '&copy; Copyright 2016. All Rights Reserved.', 'illdy' ) );
-} else {
-	$footer_copyright  = get_theme_mod( 'illdy_footer_copyright' );
-}
+$check_footer_theme_copyright_enable = get_theme_mod( 'pixova_lite_copyright_enable', 1 );
+$text_footer_theme_copyright_message = get_theme_mod( 'pixova_lite_copyright', sprintf( '&copy; %s', esc_html__( 'Copyright 20', 'pixova-lite' ) . sprintf( '%s', date( 'y' ) ) . esc_html__( '. All Rights Reserved', 'pixova-lite' ) ) );
+$sidebar_args                        = array(
+	'before_title' => '<h3 class="widget-title"><span>',
+	'after_title'  => '</span></h3>',
+);
+
 ?>
-<footer id="footer">
-	<div class="container">
-		<div class="row">
-			<?php
-			$the_widget_args = array(
-				'before_widget' => '<div class="widget">',
-				'after_widget'  => '</div>',
-				'before_title'  => '<div class="widget-title"><h5>',
-				'after_title'   => '</h5></div>',
-			);
-			?>
-			<div class="col-md-3 col-sm-6 col-xs-12">
+
+		</div><!-- #content -->
+		<footer id="footer" class="site-footer">
+			<div class="container">
+				<div class="row">
+					<?php
+
+					echo '<section class="pixova-footer-widget col-md-4 clearfix">';
+					if ( is_active_sidebar( 'footer-sidebar-1' ) ) {
+							dynamic_sidebar( 'footer-sidebar-1' );
+					} elseif ( current_user_can( 'edit_theme_options' ) ) {
+						the_widget( 'pixova_lite_widget_about', sprintf( 'title=%s', __( 'About', 'pixova-lite' ) ) . '&' . sprintf( 'show_title=1&about_text=%s.', __( 'The many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected true of a humour', 'pixova-lite' ) ), $sidebar_args );
+					}
+					echo '</section><!--/.pixova-foter-widget.col-md-4.clearfix-->';
+					echo '<section class="pixova-footer-widget col-md-4 clearfix">';
+
+					if ( is_active_sidebar( 'footer-sidebar-2' ) ) {
+
+							dynamic_sidebar( 'footer-sidebar-2' );
+
+					} elseif ( current_user_can( 'edit_theme_options' ) ) {
+					?>
+
+							<div class="widget">
+								<h3 class="widgettitle"><span><?php _e( 'Quick nav', 'pixova-lite' ); ?></span></h3>
+									<ul id="menu-pixova-footer-menu" class="menu">
+										<li class="menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item"><a href="#about"><?php _e( 'About us', 'pixova-lite' ); ?></a></li>
+										<li class="menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item"><a href="#works"><?php _e( 'Recent Works', 'pixova-lite' ); ?></a></li>
+										<li class="menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item"><a href="#testimonials"><?php _e( 'Testimonials', 'pixova-lite' ); ?></a></li>
+										<li class="menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item"><a href="#news"><?php _e( 'News', 'pixova-lite' ); ?></a></li>
+										<li class="menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item"><a href="#team"><?php _e( 'Team', 'pixova-lite' ); ?></a></li>
+										<li class="menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item"><a href="#contact"><?php _e( 'Contact', 'pixova-lite' ); ?></a></li>
+									</ul>
+							</div>
+							<?php
+					}
+
+					echo '</section><!--/.pixova-foter-widget.col-md-4.clearfix-->';
+					echo '<section class="pixova-footer-widget col-md-4 clearfix">';
+
+					if ( is_active_sidebar( 'footer-sidebar-3' ) ) {
+						dynamic_sidebar( 'footer-sidebar-3' );
+					} elseif ( current_user_can( 'edit_theme_options' ) ) {
+						the_widget( 'pixova_lite_widget_latest_posts', sprintf( 'title=%s', __( 'Latest Posts', 'pixova-lite' ) ) . '&show_title=1&items=1', $sidebar_args );
+					}
+
+					echo '</section><!--/.pixova-foter-widget.col-md-4.clearfix-->';
+
+					?>
+				</div> <!-- /.row-->
 				<?php
-				if ( is_active_sidebar( 'footer-sidebar-1' ) ):
-					dynamic_sidebar( 'footer-sidebar-1' );
-				elseif ( current_user_can( 'edit_theme_options' ) ):
-					the_widget( 'WP_Widget_Text', 'title=' . __( 'Products', 'illdy' ) . '&text=<ul><li><a href="' . esc_url( '#' ) . '" title="' . __( 'Our work', 'illdy' ) . '">' . __( 'Our work', 'illdy' ) . '</a></li><li><a href="' . esc_url( '#' ) . '" title="' . __( 'Club', 'illdy' ) . '">' . __( 'Club', 'illdy' ) . '</a></li><li><a href="' . esc_url( '#' ) . '" title="' . __( 'News', 'illdy' ) . '">' . __( 'News', 'illdy' ) . '</a></li><li><a href="' . esc_url( '#' ) . '" title="' . __( 'Announcement', 'illdy' ) . '">' . __( 'Announcement', 'illdy' ) . '</a></li></ul>', $the_widget_args );
-				endif;
-				?>
-			</div><!--/.col-sm-3-->
-			<div class="col-md-3 col-sm-6 col-xs-12">
-				<?php
-				if ( is_active_sidebar( 'footer-sidebar-2' ) ):
-					dynamic_sidebar( 'footer-sidebar-2' );
-				elseif ( current_user_can( 'edit_theme_options' ) ):
-					the_widget( 'WP_Widget_Text', 'title=' . __( 'Information', 'illdy' ) . '&text=<ul><li><a href="' . esc_url( '#' ) . '" title="' . __( 'Pricing', 'illdy' ) . '">' . __( 'Pricing', 'illdy' ) . '</a></li><li><a href="' . esc_url( '#' ) . '" title="' . __( 'Terms', 'illdy' ) . '">' . __( 'Terms', 'illdy' ) . '</a></li><li><a href="' . esc_url( '#' ) . '" title="' . __( 'Affiliates', 'illdy' ) . '">' . __( 'Affiliates', 'illdy' ) . '</a></li><li><a href="' . esc_url( '#' ) . '" title="' . __( 'Blog', 'illdy' ) . '">' . __( 'Blog', 'illdy' ) . '</a></li></ul>', $the_widget_args );
-				endif;
-				?>
-			</div><!--/.col-sm-3-->
-			<div class="col-md-3 col-sm-6 col-xs-12">
-				<?php
-				if ( is_active_sidebar( 'footer-sidebar-3' ) ):
-					dynamic_sidebar( 'footer-sidebar-3' );
-				elseif ( current_user_can( 'edit_theme_options' ) ):
-					the_widget( 'WP_Widget_Text', 'title=' . __( 'Support', 'illdy' ) . '&text=<ul><li><a href="' . esc_url( '#' ) . '" title="' . __( 'Documentation', 'illdy' ) . '">' . __( 'Documentation', 'illdy' ) . '</a></li><li><a href="' . esc_url( '#' ) . '" title="' . __( 'FAQs', 'illdy' ) . '">' . __( 'FAQs', 'illdy' ) . '</a></li><li><a href="' . esc_url( '#' ) . '" title="' . __( 'Forums', 'illdy' ) . '">' . __( 'Forums', 'illdy' ) . '</a></li><li><a href="' . esc_url( '#' ) . '" title="' . __( 'Contact', 'illdy' ) . '">' . __( 'Contact', 'illdy' ) . '</a></li></ul>', $the_widget_args );
-				endif;
-				?>
-			</div><!--/.col-sm-3-->
-			<div class="col-md-3 col-sm-6 col-xs-12">
-				<?php
-				if ( is_active_sidebar( 'footer-sidebar-4' ) ):
+				echo '<div class="row">';
+					echo '<section class="pixova-footer-widget col-md-12 clearfix">';
+				if ( is_active_sidebar( 'footer-sidebar-4' ) ) {
 					dynamic_sidebar( 'footer-sidebar-4' );
-				elseif ( current_user_can( 'edit_theme_options' ) ):
-					the_widget( 'WP_Widget_Text', 'title=' . __( 'Support', 'illdy' ) . '&text=<ul><li><a href="' . esc_url( '#' ) . '" title="' . __( 'Documentation', 'illdy' ) . '">' . __( 'Documentation', 'illdy' ) . '</a></li><li><a href="' . esc_url( '#' ) . '" title="' . __( 'FAQs', 'illdy' ) . '">' . __( 'FAQs', 'illdy' ) . '</a></li><li><a href="' . esc_url( '#' ) . '" title="' . __( 'Forums', 'illdy' ) . '">' . __( 'Forums', 'illdy' ) . '</a></li><li><a href="' . esc_url( '#' ) . '" title="' . __( 'Contact', 'illdy' ) . '">' . __( 'Contact', 'illdy' ) . '</a></li></ul>', $the_widget_args );
-				endif;
+				} elseif ( current_user_can( 'edit_theme_options' ) ) {
+					the_widget( 'pixova_lite_widget_social_media', sprintf( 'title=%s', __( 'Follow us', 'pixova-lite' ) ) . '&show_title=0&profile_facebook=#&profile_twitter=#&profile_plus=#&profile_pinterest=#&profile_linkedin=#&profile_youtube=#&profile_dribbble=#&profile_tumblr=#&profile_instagram=#&profile_github=#&profile_bitbucket=#&profile_codepen=#.' );
+				}
+					echo '</section><!--/.pixova-foter-widget.col-md-12.clearfix-->';
+				echo '</div><!--/.row-->';
 				?>
-			</div><!--/.col-sm-3-->
-		</div><!--/.row-->
-	</div><!--/.container-->
-	<div class="bottom-footer">
-		<div class="container">
-			<p class="copyright">
-				<span><?php printf( '%s <a href="%s" title="%s" target="_blank">%s</a>.', __( 'Theme:', 'illdy' ), esc_url( 'http://colorlib.com/wp/themes/illdy' ), __( 'Illdy', 'illdy' ), __( 'Illdy', 'illdy' ) ); ?></span>
-				<span class="bottom-copyright" data-customizer="copyright-credit"><?php echo illdy_sanitize_html( $footer_copyright ); ?></span>
-			</p>
-		</div>
-	</div>
-</footer><!--/#footer-->
-<?php wp_footer(); ?>
-</body>
+			</div> <!-- /.container -->
+
+			<div class="fluid-container">
+				<div class="footer-copyright-container">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="text-center">
+								<p class="footer-copyright">
+
+									<?php
+
+									if ( $check_footer_theme_copyright_enable ) {
+									?>
+
+										<span class="pixova-lite-footer-theme-copyright">
+										<?php _e( 'Theme:', 'pixova-lite' ); ?> <a href="<?php echo esc_url( 'https://colorlib.com/wp/themes/pixova/' ); ?>" target="_blank" title="<?php _e( 'Free One Page Parallax WordPress Theme', 'pixova-lite' ); ?>"><?php _e( 'Pixova Lite', 'pixova-lite' ); ?></a>
+										&middot;
+										<?php _e( 'Made with','pixova-lite' ); ?> <span class="footer-heart-icon fa fa-heart"></span> <?php _e( ' by ', 'pixova-lite' ); ?> 
+										<a href="https://colorlib.com/" title="Premium Professional Responsive WordPress Themes"><?php _e( 'Colorlib', 'pixova-lite' ); ?></a>
+										&middot;
+										</span><!--/.pixova-lite-footer-theme-copyright-->
+										<?php } ?>
+
+									<span class="pixova-lite-footer-text-copyright">
+										<?php echo wp_kses_post( $text_footer_theme_copyright_message ); ?>
+									</span><!--/.pixova-lite-footer-text-copyright-->
+								</p>
+							</div><!--/.text-center-->
+						</div><!--/col-lg-12-->
+					</div><!--/.row-->
+				</div><!--/.footer-copyright-container-->
+			</div><!--/.fluid-container-->
+		</footer>
+		<a href="#" class="pixova-top"><?php _e( 'Top', 'pixova-lite' ); ?></a>
+		<?php wp_footer(); ?>
+	</body>
 </html>
