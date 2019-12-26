@@ -1,19 +1,27 @@
-<?php 
+<?php
 /**
- * The Sidebar for SKT Watch
+ *	The template for dispalying the sidebar.
  *
- * Stores the sidebar area of the template. loaded in other template files with get_sidebar();
- *
- * @package SKT Watch
- * 
- * @since SKT Watch 1.0
+ *	@package WordPress
+ *	@subpackage illdy
  */
-global $complete;?>
+?>
+<div class="col-sm-4">
+	<div id="sidebar">
+		<?php
+		if( is_active_sidebar( 'blog-sidebar' ) ):
+			dynamic_sidebar( 'blog-sidebar' );
+		else:
+			$the_widget_args = array(
+				'before_widget'	=> '<div class="widget">',
+				'after_widget'	=> '</div>',
+				'before_title'	=> '<div class="widget-title"><h3>',
+				'after_title'	=> '</h3></div>'
+			);
 
-            <?php if ( is_active_sidebar( 'sidebar' ) ) : ?>
-                <div id="sidebar" class="home_sidebar <?php if(!empty($complete['hide_mob_rightsdbr'])){ echo 'hide_mob_rightsdbr';} ?>">
-                    <div class="widgets">  
-                            <?php dynamic_sidebar('sidebar'); ?>
-                     </div>
-                 </div>
-            <?php endif; ?>
+			the_widget( 'WP_Widget_Categories', 'title=' . __( 'Categories', 'illdy' ), $the_widget_args );
+			the_widget( 'WP_Widget_Archives', 'title=' . __( 'Archive', 'illdy' ), $the_widget_args );
+		endif;
+		?>
+	</div><!--/#sidebar-->
+</div><!--/.col-sm-4-->

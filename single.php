@@ -1,14 +1,44 @@
-<?php global $complete;?>
+<?php
+/**
+ *    The template for dispalying the single.
+ *
+ * @package    WordPress
+ * @subpackage illdy
+ */
+
+global $post;
+$sidebar_enabled = get_post_meta( $post->ID, 'illdy-sidebar-enable', true );
+
+?>
+
 <?php get_header(); ?>
-<div class="post_wrap layer_wrapper">
-    <!--CUSTOM PAGE HEADER STARTS-->
-    <?php get_template_part('sktframe/core','pageheader'); ?>
-    <!--CUSTOM PAGE HEADER ENDS-->
-    <?php $singletype = $complete['single_post_layout_id']; ?>
-	<?php if( $singletype == 'single_layout1'){include('templates/rightsidebar_single_template.php');} ?>
-    <?php if( $singletype == 'single_layout2'){include('templates/leftsidebar_single_template.php');} ?>
-    <?php if( $singletype == 'single_layout3'){include('templates/fullwidth_single_template.php');} ?>
-    <?php if( $singletype == 'single_layout4'){include('templates/nosidebar_single_template.php');}?>
-    <!--#content END-->
-</div><!--layer_wrapper class END-->
+	<div class="container">
+	<div class="row">
+		<?php if ( is_active_sidebar( 'blog-sidebar' ) ) { ?>
+		<div class="col-sm-8">
+			<?php } else { ?>
+			<div class="col-sm-8 col-sm-offset-2">
+				<?php } ?>
+
+				<section id="blog">
+					<?php
+					if ( have_posts() ):
+						while ( have_posts() ):
+							the_post();
+							get_template_part( 'template-parts/content', 'single' );
+						endwhile;
+					endif;
+					?>
+				</section><!--/#blog-->
+			</div><!--/.col-sm-7-->
+
+			<?php if ( is_active_sidebar( 'blog-sidebar' ) ) { ?>
+				<div class="col-sm-4">
+					<div id="sidebar">
+						<?php dynamic_sidebar( 'blog-sidebar' ); ?>
+					</div>
+				</div>
+			<?php } ?>
+		</div><!--/.row-->
+	</div><!--/.container-->
 <?php get_footer(); ?>

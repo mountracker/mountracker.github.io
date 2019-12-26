@@ -1,45 +1,42 @@
-<?php 
+<?php
 /**
- * The Default Woocommerce Template for SKT Watch
+ *	The template for displaying WooCommerce.
  *
- * Displays the Woocommerce pages.
- *
- * @package SKT Watch
- * 
- * @since SKT Watch 1.0
+ *	@package WordPress
+ *	@subpackage illdy
  */
-global $complete;?>
-
+?>
 <?php get_header(); ?>
+<div class="container">
+	<div class="row">
+		<div class="col-sm-7">
+			<section id="blog">
+				<?php woocommerce_content(); ?>
+			</section><!--/#blog-->
+		</div><!--/.col-sm-7-->
+		<?php if( is_active_sidebar( 'woocommerce-sidebar' ) ): ?>
+			<div class="col-sm-4">
+				<div id="sidebar">
+					<?php dynamic_sidebar( 'woocommerce-sidebar' ); ?>
+				</div><!--/#sidebar-->
+			</div><!--/.col-sm-4-->
+		<?php else: ?>
+			<div class="col-sm-4">
+				<div id="sidebar">
+					<?php
+					$the_widget_title = array(
+						'before_widget'	=> '<div class="widget">',
+						'after_widget'	=> '</div>',
+						'before_title'	=> '<div class="widget-title"><h3>',
+						'after_title'	=> '</h3></div>'
+					);
 
-    <div class="page_wrap layer_wrapper">
-    	<?php if(!is_singular()) { ?>
-        <!--CUSTOM PAGE HEADER STARTS-->
-            <?php get_template_part('sktframe/core','pageheader'); ?>
-        <!--CUSTOM PAGE HEADER ENDS-->
-        <?php } ?>
-        <div id="content">
-            <div class="center">
-                <div class="single_wrap">
-                    
-                    <div class="single_post">
-
-                          <div class="layerbread"><?php woocommerce_breadcrumb(); ?></div>
-
- 						<?php woocommerce_content(); ?>
-                    </div>
-                
-                    </div>
-               
-                <!--PAGE END-->
-            
-            
-                <!--SIDEBAR START--> 
-                    <?php get_sidebar('page'); ?>
-                <!--SIDEBAR END--> 
-            
-                    </div>
-            </div>
-    </div><!--layer_wrapper class END-->
-
+					the_widget( 'WC_Widget_Cart', 'title=' . __( 'WooCommerce Title', 'illdy' ), $the_widget_title );
+					the_widget( 'WC_Widget_Product_Categories', 'title=' . __( 'Product Categories', 'illdy' ), $the_widget_title );
+					?>
+				</div><!--/#sidebar-->
+			</div><!--/.col-sm-4-->
+		<?php endif; ?>
+	</div><!--/.row-->
+</div><!--/.container-->
 <?php get_footer(); ?>

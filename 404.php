@@ -1,44 +1,28 @@
-<?php 
+<?php
 /**
- * The 404 Page for SKT Watch
+ *	The template for dispalying the archive.
  *
- * Displays when a certain page is not found section and everything
- *
- * @package SKT Watch
- * 
- * @since SKT Watch 1.0
+ *	@package WordPress
+ *	@subpackage illdy
  */
-global $complete;?>
-
+?>
 <?php get_header(); ?>
-<div class="fofo_wrap layer_wrapper">
-    	<!--404 Page Title-->
-            <div class="page_tt">
-                <div class="center">
-                    <div class="fourofour">
-                        <label><a>404</a></label>
-                     </div>
-                        <h2 class="postitle"><?php _e('Page Not Found', 'complete'); ?></h2>
-                    </div>
-                </div> 
-		<!--404 Description-->                   
-            <div id="content">
-                <div class="center">
-                    <div class="single_wrap no_sidebar">
-                        <div class="single_post">
-							<div id="content_wrap" class="error_page">
-                                    <div class="post">
-                                        <div class="error_msg">
-                                            <p>
-                                            <label><?php _e('Server cannot find the file you requested. The Page has either been moved or deleted, or you entered the wrong URL or document name. Look at the URL. If a word looks misspelled, then correct it and try it again. If that doesnt work You can try our search option to find what you are looking for.', 'complete'); ?></label>
-                                            </p>
-                                        <?php get_search_form(); ?>
-                                        </div>
-                                </div>     
-                              </div>
-                          </div>
-                      </div>
-                        </div>
-                </div>
-</div><!--layer_wrapper class END-->
+<div class="container">
+	<div class="row">
+		<div class="col-sm-12">
+			<section id="blog">
+				<div class="row row-404">
+					<div class="col-md-2 text-right">
+						<span class="error-code"><?php _e( '404', 'illdy' ) ?></span>
+					</div>
+					<div class="col-md-10">
+						<h2><?php _e( 'OOOPS!', 'illdy' ) ?></h2>
+						<p><?php _e( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec aliquet lorem ac orci dictum sodales et eget orci. Vestibulum a laoreet dolor. Sed finibus vulputate nisl, at pulvinar nisi commodo ac. Proin placerat auctor libero. Phasellus nec suscipit mi, sed faucibus purus.', 'illdy' ) ?></p>
+						<a href="<?php echo site_url() ?>" class="button"><?php _e( 'Home', 'illdy' ) ?></a>
+					</div>
+				</div>
+			</section><!--/#blog-->
+		</div><!--/.col-sm-7-->
+	</div><!--/.row-->
+</div><!--/.container-->
 <?php get_footer(); ?>
